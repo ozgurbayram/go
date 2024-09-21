@@ -43,7 +43,7 @@ func (r *PostgresUserRepository) GetUserById(ctx context.Context, id string) (*d
 	return user, nil
 }
 
-func (r *PostgresUserRepository) GetAllUsers(ctx context.Context) ([]domain.User, error) {
+func (r *PostgresUserRepository) GetAllUsers(ctx context.Context) ([]*domain.User, error) {
 	query := `
 		SELECT id,name,email FROM users
 	`
@@ -56,7 +56,7 @@ func (r *PostgresUserRepository) GetAllUsers(ctx context.Context) ([]domain.User
 
 	defer rows.Close()
 
-	var users []domain.User
+	var users []*domain.User
 
 	for rows.Next() {
 		var user domain.User
@@ -66,7 +66,7 @@ func (r *PostgresUserRepository) GetAllUsers(ctx context.Context) ([]domain.User
 		if err != nil {
 			return nil, err
 		}
-		users = append(users, user)
+		users = append(users, &user)
 	}
 
 	return users, nil
