@@ -1,31 +1,41 @@
 package application
 
 import (
+	"context"
 	"mygogo/internal/user/domain"
-
-	"github.com/google/uuid"
 )
 
 type UserService interface {
-	GetUserById(id uuid.UUID) *domain.User
-	CreateNewUser(name, email string) *domain.User
+	GetUserById(id string) (*domain.User, error)
+	CreateNewUser(name, email string) (*domain.User, error)
 }
 
 type userServiceImpl struct {
+	userRepository domain.UserRepository
 }
 
-func NewUserService() UserService {
-	return &userServiceImpl{}
+func NewUserService(userRepository domain.UserRepository) UserService {
+	return &userServiceImpl{userRepository: userRepository}
 }
 
-func (s *userServiceImpl) GetUserById(id uuid.UUID) *domain.User {
-	user := domain.NewUser("ozgur", "dsa")
+func (s *userServiceImpl) GetUserById(id string) (*domain.User, error) {
+	user, err := s.userRepository.GetUserById(context.Background(), id)
 
-	return user
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
-func (s *userServiceImpl) CreateNewUser(name, email string) *domain.User {
-	user := domain.NewUser("ozgur", "dsada")
+func (s *userServiceImpl) CreateNewUser(name, email string) (*domain.User, error) {
+	user := domain.NewUser(name, email)
 
-	return user
+	err := s.userRepository.CreateUser(context.Background(), user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

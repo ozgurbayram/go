@@ -7,11 +7,11 @@ import (
 )
 
 type User struct {
-	Id        uuid.UUID
-	Name      string
-	Email     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Id        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func NewUser(name, email string) *User {
