@@ -8,6 +8,7 @@ import (
 type UserService interface {
 	GetUserById(id string) (*domain.User, error)
 	CreateNewUser(name, email string) (*domain.User, error)
+	GetAllUsers() ([]*domain.User, error)
 }
 
 type userServiceImpl struct {
@@ -26,6 +27,16 @@ func (s *userServiceImpl) GetUserById(id string) (*domain.User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *userServiceImpl) GetAllUsers() ([]*domain.User, error) {
+	users, err := s.userRepository.GetAllUsers(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (s *userServiceImpl) CreateNewUser(name, email string) (*domain.User, error) {

@@ -38,6 +38,18 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]domain.User{"ok": *usr})
 }
 
+func (c *UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := c.userService.GetAllUsers()
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string][]*domain.User{"users": users})
+}
+
 func (c *UserController) GetUserById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
