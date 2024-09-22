@@ -7,7 +7,7 @@ import (
 
 type UserService interface {
 	GetUserById(id string) (*domain.User, error)
-	CreateNewUser(name, email string) (*domain.User, error)
+	CreateNewUser(name, email, password string) (*domain.User, error)
 	GetAllUsers() ([]*domain.User, error)
 }
 
@@ -39,8 +39,9 @@ func (s *userServiceImpl) GetAllUsers() ([]*domain.User, error) {
 	return users, nil
 }
 
-func (s *userServiceImpl) CreateNewUser(name, email string) (*domain.User, error) {
+func (s *userServiceImpl) CreateNewUser(name, email, password string) (*domain.User, error) {
 	user := domain.NewUser(name, email)
+	user.SetPassword(password)
 
 	err := s.userRepository.CreateUser(context.Background(), user)
 

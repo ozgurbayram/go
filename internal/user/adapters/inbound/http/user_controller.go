@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"mygogo/internal/core/utils"
 	"mygogo/internal/user/application"
 	"mygogo/internal/user/domain"
 	"net/http"
@@ -17,17 +18,20 @@ func NewUserController(userService application.UserService) *UserController {
 	return &UserController{userService: userService}
 }
 
-func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
-	name := r.FormValue("name")
-	email := r.FormValue("email")
+type UserCreateRequest struct {
+	Name     string `json:"name" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Email    string `json:"email" validate:"required,email"`
+}
 
-	if name == "" || email == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Name and email are required"})
+func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
+	var request UserCreateRequest
+
+	if !utils.DecodeAndValidateRequest(r, &request, w) {
 		return
 	}
 
-	usr, err := c.userService.CreateNewUser(name, email)
+	usr, err := c.userService.CreateNewUser(request.Name, request.Email, request.Password)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

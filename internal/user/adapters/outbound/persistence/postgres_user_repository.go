@@ -27,12 +27,12 @@ func (r *PostgresUserRepository) GetUserById(ctx context.Context, id string) (*d
 		FROM users
 		WHERE id = $1
 	`
+	
 	row := r.db.QueryRow(ctx, query, id)
-
 	user := &domain.User{}
-
+	
 	err := row.Scan(&user.Id, &user.Name, &user.Email)
-
+	
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errors.New(http.StatusText(http.StatusNotFound))
@@ -47,7 +47,7 @@ func (r *PostgresUserRepository) GetAllUsers(ctx context.Context) ([]*domain.Use
 	query := `
 		SELECT id,name,email FROM users
 	`
-
+	
 	rows, err := r.db.Query(ctx, query)
 
 	if err != nil {
